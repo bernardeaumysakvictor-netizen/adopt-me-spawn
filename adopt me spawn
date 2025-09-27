@@ -1,0 +1,361 @@
+lua
+-- Enhanced Educational Adopt Me Pet System
+-- Demonstrates advanced Lua programming concepts
+-- FOR EDUCATIONAL PURPOSES ONLY
+
+-- Advanced pet database with all potion types and variants
+local adoptMePets = {
+    common = {
+        {name = "Cat", base_value = 10},
+        {name = "Dog", base_value = 15},
+        {name = "Otter", base_value = 8},
+        {name = "Buffalo", base_value = 12}
+    },
+    
+    uncommon = {
+        {name = "Penguin", base_value = 25},
+        {name = "Silly Duck", base_value = 30},
+        {name = "Robin", base_value = 20}
+    },
+    
+    rare = {
+        {name = "Bee", base_value = 50},
+        {name = "Bunny", base_value = 45},
+        {name = "Elephant", base_value = 60},
+        {name = "Hyena", base_value = 55}
+    },
+    
+    ultra_rare = {
+        {name = "Albino Monkey", base_value = 200},
+        {name = "Albino Bat", base_value = 120},
+        {name = "Ghost Bunny", base_value = 150},
+        {name = "Kangaroo", base_value = 200},
+        {name = "Skele-Rex", base_value = 250},
+        {name = "T-Rex", base_value = 180}
+    },
+    
+    legendary = {
+        {name = "Dragon", base_value = 400},
+        {name = "Unicorn", base_value = 500},
+        {name = "King Bee", base_value = 450},
+        {name = "Griffin", base_value = 420},
+        {name = "Goldhorn", base_value = 600},
+        {name = "Phoenix", base_value = 550},
+        {name = "Shark", base_value = 480},
+        {name = "Octopus", base_value = 520}
+    },
+    
+    high_tier = {
+        {name = "Frost Dragon", base_value = 5000, limited = true},
+        {name = "Owl", base_value = 4500, limited = true},
+        {name = "Parrot", base_value = 4800, limited = true},
+        {name = "Bat Dragon", base_value = 6000, limited = true},
+        {name = "Shadow Dragon", base_value = 5500, limited = true},
+        {name = "Giraffe", base_value = 5200, limited = true},
+        {name = "Arctic Reindeer", base_value = 4700, limited = true},
+        {name = "Evil Unicorn", base_value = 5100, limited = true},
+        {name = "Crow", base_value = 4900, limited = true},
+        {name = "Flamingo", base_value = 4300, limited = true},
+        {name = "Lion", base_value = 4600, limited = true}
+    }
+}
+
+-- Potion types and their value multipliers
+local potionTypes = {
+    ["No Potion"] = {fly = false, ride = false, multiplier = 1.0},
+    ["Fly"] = {fly = true, ride = false, multiplier = 1.5},
+    ["Ride"] = {fly = false, ride = true, multiplier = 1.5},
+    ["Fly Ride"] = {fly = true, ride = true, multiplier = 2.0}
+}
+
+-- Neon types and their value multipliers
+local neonTypes = {
+    ["Normal"] = {neon = false, mega_neon = false, multiplier = 1.0},
+    ["Neon"] = {neon = true, mega_neon = false, multiplier = 4.0},
+    ["Mega Neon"] = {neon = true, mega_neon = true, multiplier = 10.0}
+}
+
+-- Player inventory system
+local playerInventory = {
+    pets = {},
+    cash = 10000,
+    username = "StudentPlayer"
+}
+
+-- Trading system (visual only)
+local tradeSystem = {
+    my_offer = {},
+    their_offer = {},
+    trading = false,
+    trade_partner = "VirtualTrader"
+}
+
+-- Function to calculate final pet value
+function calculatePetValue(base_value, potion_type, neon_type)
+    local potion_multiplier = potionTypes[potion_type].multiplier
+    local neon_multiplier = neonTypes[neon_type].multiplier
+    return math.floor(base_value * potion_multiplier * neon_multiplier)
+end
+
+-- Function to create a pet with random attributes
+function createRandomPet(pet_data, rarity)
+    local potion_keys = {"No Potion", "Fly", "Ride", "Fly Ride"}
+    local neon_keys = {"Normal", "Neon", "Mega Neon"}
+    
+    local random_potion = potion_keys[math.random(1, #potion_keys)]
+    local random_neon = math.random(1, 10) <= 3 and neon_keys[math.random(2, #neon_keys)] or "Normal"
+    
+    local final_value = calculatePetValue(pet_data.base_value, random_potion, random_neon)
+    
+    return {
+        name = pet_data.name,
+        rarity = rarity,
+        base_value = pet_data.base_value,
+        final_value = final_value,
+        potion_type = random_potion,
+        neon_type = random_neon,
+        fly = potionTypes[random_potion].fly,
+        ride = potionTypes[random_potion].ride,
+        neon = neonTypes[random_neon].neon,
+        mega_neon = neonTypes[random_neon].mega_neon,
+        limited = pet_data.limited or false,
+        obtained_date = os.date("%Y-%m-%d")
+    }
+end
+
+-- Function to spawn all high-tier pets (simulated button click)
+function spawnAllPets()
+    print("\n🎁 SPAWNING ALL HIGH-TIER PETS! 🎁")
+    
+    local spawned_count = 0
+    
+    -- Spawn pets from each category with all variants
+    for rarity, pets in pairs(adoptMePets) do
+        for _, pet_data in ipairs(pets) do
+            -- Create multiple variants of each pet
+            for _, potion_type in pairs({"No Potion", "Fly", "Ride", "Fly Ride"}) do
+                for _, neon_type in pairs({"Normal", "Neon", "Mega Neon"}) do
+                    local new_pet = {
+                        name = pet_data.name,
+                        rarity = rarity,
+                        base_value = pet_data.base_value,
+                        final_value = calculatePetValue(pet_data.base_value, potion_type, neon_type),
+                        potion_type = potion_type,
+                        neon_type = neon_type,
+                        fly = potionTypes[potion_type].fly,
+                        ride = potionTypes[potion_type].ride,
+                        neon = neonTypes[neon_type].neon,
+                        mega_neon = neonTypes[neon_type].mega_neon,
+                        limited = pet_data.limited or false,
+                        obtained_date = os.date("%Y-%m-%d")
+                    }
+                    
+                    table.insert(playerInventory.pets, new_pet)
+                    spawned_count = spawned_count + 1
+                end
+            end
+        end
+    end
+    
+    print(string.format("Spawned %d pets total!", spawned_count))
+    print("Your inventory now contains every pet with all potion and neon variants!")
+end
+
+-- Function to display pet with emojis
+function displayPet(pet, index)
+    local emoji = ""
+    if pet.limited then emoji = "🌟 " end
+    if pet.mega_neon then emoji = "🌈 " 
+    elseif pet.neon then emoji = "✨ " end
+    
+    local potion_icons = ""
+    if pet.fly and pet.ride then potion_icons = "🦅🚗"
+    elseif pet.fly then potion_icons = "🦅"
+    elseif pet.ride then potion_icons = "🚗" end
+    
+    local index_str = index and string.format("%3d. ", index) or "     "
+    
+    print(string.format("%s%s%s %s%s", index_str, emoji, pet.name, potion_icons, 
+          string.format(" (%s, %s) - Value: %,d", pet.potion_type, pet.neon_type, pet.final_value)))
+end
+
+-- Function to display inventory with filtering
+function displayInventory(filter_rarity)
+    print("\n=== PLAYER INVENTORY ===")
+    print("Player: " .. playerInventory.username)
+    print("Cash: " .. playerInventory.cash)
+    
+    local filtered_pets = {}
+    local total_value = 0
+    
+    for _, pet in ipairs(playerInventory.pets) do
+        if not filter_rarity or pet.rarity == filter_rarity then
+            table.insert(filtered_pets, pet)
+            total_value = total_value + pet.final_value
+        end
+    end
+    
+    print("Displaying: " .. (filter_rarity and filter_rarity or "All pets"))
+    print("Total Pets: " .. #filtered_pets)
+    print("Total Value: " .. total_value)
+    
+    if #filtered_pets > 0 then
+        for i, pet in ipairs(filtered_pets) do
+            displayPet(pet, i)
+        end
+    else
+        print("No pets found!")
+    end
+    
+    return filtered_pets
+end
+
+-- Trading system functions
+function startTrade()
+    tradeSystem.trading = true
+    tradeSystem.my_offer = {}
+    tradeSystem.their_offer = {}
+    print("\n🤝 TRADE STARTED with " .. tradeSystem.trade_partner)
+    print("Use 'add [number]' to add pets to your offer")
+    print("Use 'view' to see current trade")
+    print("Use 'accept' to complete trade")
+    print("Use 'cancel' to cancel trade")
+end
+
+function addToTrade(pet_index)
+    if pet_index >= 1 and pet_index <= #playerInventory.pets then
+        local pet = playerInventory.pets[pet_index]
+        table.insert(tradeSystem.my_offer, pet)
+        print("Added " .. pet.name .. " to your offer")
+    else
+        print("Invalid pet number!")
+    end
+end
+
+function viewTrade()
+    print("\n=== CURRENT TRADE ===")
+    print("YOUR OFFER:")
+    if #tradeSystem.my_offer > 0 then
+        for i, pet in ipairs(tradeSystem.my_offer) do
+            displayPet(pet, i)
+        end
+    else
+        print("No pets offered")
+    end
+    
+    print("\nTHEIR OFFER:")
+    if #tradeSystem.their_offer > 0 then
+        for i, pet in ipairs(tradeSystem.their_offer) do
+            displayPet(pet, i)
+        end
+    else
+        print("No pets offered")
+    end
+end
+
+function acceptTrade()
+    if #tradeSystem.my_offer > 0 then
+        print("\n✅ TRADE COMPLETED! (Visual only - no actual exchange)")
+        print("This is a visual simulation for educational purposes.")
+        
+        -- In a real system, you would transfer pets between inventories
+        -- For education, we just show what would happen
+        
+        local my_total = 0
+        local their_total = 0
+        
+        for _, pet in ipairs(tradeSystem.my_offer) do
+            my_total = my_total + pet.final_value
+        end
+        for _, pet in ipairs(tradeSystem.their_offer) do
+            their_total = their_total + pet.final_value
+        end
+        
+        print(string.format("Your offer value: %,d", my_total))
+        print(string.format("Their offer value: %,d", their_total))
+        
+        if my_total > their_total then
+            print("📈 You would gain value in this trade!")
+        elseif my_total < their_total then
+            print("📉 You would lose value in this trade!")
+        else
+            print("⚖️ Trade is perfectly fair!")
+        end
+        
+    else
+        print("Cannot accept empty trade!")
+    end
+    tradeSystem.trading = false
+end
+
+-- Main menu system
+function mainMenu()
+    math.randomseed(os.time())
+    
+    while true do
+        if tradeSystem.trading then
+            io.write("\n[trade] Enter command (add/view/accept/cancel): ")
+            local command = io.read():lower()
+            
+            if command == "view" then
+                viewTrade()
+            elseif command:sub(1,3) == "add" then
+                local pet_num = tonumber(command:sub(5))
+                addToTrade(pet_num)
+            elseif command == "accept" then
+                acceptTrade()
+            elseif command == "cancel" then
+                tradeSystem.trading = false
+                print("Trade cancelled!")
+            else
+                print("Unknown command!")
+            end
+        else
+            print("\n" .. string.rep("=", 60))
+            print("🎓 EDUCATIONAL ADOPT ME PET SYSTEM 🎓")
+            print(string.rep("=", 60))
+            print("1. 📦 Spawn All Pets (Simulated Button Click)")
+            print("2. 👀 View My Inventory")
+            print("3. 💎 View High-Tier Pets Only")
+            print("4. 🤝 Start Visual Trade")
+            print("5. 💰 Calculate Total Value")
+            print("6. 🎯 Filter by Rarity")
+            print("7. 🚪 Exit")
+            print(string.rep("=", 60))
+            
+            io.write("Choose an option (1-7): ")
+            local choice = io.read()
+            
+            if choice == "1" then
+                spawnAllPets()
+            elseif choice == "2" then
+                displayInventory()
+            elseif choice == "3" then
+                displayInventory("high_tier")
+            elseif choice == "4" then
+                startTrade()
+            elseif choice == "5" then
+                local total = 0
+                for _, pet in ipairs(playerInventory.pets) do
+                    total = total + pet.final_value
+                end
+                print(string.format("\nTotal Inventory Value: %,d", total))
+            elseif choice == "6" then
+                print("Enter rarity (common/uncommon/rare/ultra_rare/legendary/high_tier): ")
+                local rarity = io.read()
+                displayInventory(rarity)
+            elseif choice == "7" then
+                print("Thanks for learning advanced Lua programming!")
+                break
+            else
+                print("Invalid option!")
+            end
+        end
+    end
+end
+
+-- Add some starter pets
+print("Welcome to the Advanced Educational Adopt Me Pet System!")
+print("This demonstrates complex Lua programming concepts.")
+print("Type '1' and press Enter to simulate clicking the 'Spawn Pets' button!")
+mainMenu()
